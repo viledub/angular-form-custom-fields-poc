@@ -1,0 +1,11 @@
+<div 
+  class="dynamic-field form-select" 
+  [formGroup]="group">
+  <label>{{config.label}}</label>
+  <select 
+    type="select"
+    [formControlName]="config.name">
+    	<option value="">--Please choose an option--</option>
+    	<option *ngFor="let opt of config.options" [ngValue]="opt.value">{{opt.label}}</option>
+    </select>
+</div>
