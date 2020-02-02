@@ -8,6 +8,7 @@ import { TextFieldComponent } from './text-field/text-field.component';
 import { DynamicFieldDirective } from './dynamic-field.directive';
 
 import { OptionFieldComponent } from './option-field/option-field.component';
+import { PageLayoutEditorComponent } from './page-layout-editor/page-layout-editor.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { OptionFieldComponent } from './option-field/option-field.component';
     DynamicFormComponent,
     TextFieldComponent,
     DynamicFieldDirective,
-    OptionFieldComponent
+    OptionFieldComponent,
+    PageLayoutEditorComponent
   ],
   imports: [
     BrowserModule,

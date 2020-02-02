@@ -1,0 +1,12 @@
+<div class="field-list" *ngFor="let field of availableFields">
+	<div>
+		<div>{{field.label}}</div>
+		<button (click)="addField(field)">Add</button>
+	</div>
+</div>
+<div class="layout" *ngFor="let addedField of visibleView | async">
+	<div>
+		<div>{{addedField.label}}</div>
+		<button (click)="removeField(addedField)">Remove</button>
+	</div>
+</div>

@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { LayoutServiceService } from './layout-service.service'
+import { FieldService } from './field.service'
+import { ComposerService } from './composer.service'
 
 @Component({
   selector: 'app-root',
@@ -7,39 +10,9 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'dynamic-forms';
-  layout = [
-  { name: 'name' },
-  { name: 'description' },
-  // { name: 'category' },
-  ];
+  layout = [];
 
-  schema: FieldMetaData[] = [
-	  {
-	  	type: 'text',
-	  	label: 'Full name',
-	  	name: 'name',
-	  	placeholder: 'Enter your name',
-	  	tooltip: 'A tooltip'
-	  } as TextFieldMetaData ,
-	  {
-	  	type: 'text',
-	  	label: 'Description',
-	  	name: 'description',
-	  	placeholder: 'Enter your description',
-	  	tooltip: 'A tooltip'
-	  } as TextFieldMetaData,
-	  {
-	  	type: 'dropdown',
-	  	label: 'Category',
-	  	name: 'category',
-	  	tooltip: 'A tooltip',
-	  	options: [
-	  		{ value: '1', label: 'Category Amhain'},
-	  		{ value: '2', label: 'Category A do'},
-	  		{ value: '3', label: 'Category a tri'},
-	  	]
-	  } as OptionFieldMetaData 
-  ]
+  schema: FieldMetaData[] = []
   data = [
     {
       name: 'name'
@@ -53,20 +26,26 @@ export class AppComponent {
       value: '1'
     }
   ];
-  config = this.compose(this.layout, this.schema, this.data);
-
-  compose(layout, schema, data) {
-  	const schemaLayout = layout.map(chosenField => schema.find(schemaItem => schemaItem.name === chosenField.name));
-  	
-  	const present = schemaLayout.map((chosenField) => {
-		const resolvedData = data.find(dataItem => dataItem.name === chosenField.name);
-		return { ...chosenField, ...resolvedData }
-	});
-	console.log(present);
-  	return present;
+  config = [];
+  constructor(private layoutService: LayoutServiceService,
+  			private fieldService: FieldService,
+  			private composerService: ComposerService) {
+  	this.config = this.composerService.compose(this.layout, this.schema, this.data);
+  	this.layoutService.fields.subscribe(onUpdate => {
+  		this.layout = onUpdate
+  		this.config = this.composerService.compose(this.layout, this.schema, this.data);
+  	});
+  	this.fieldService.fields.subscribe(onUpdate => {
+  		this.schema = onUpdate
+  		this.config = this.composerService.compose(this.layout, this.schema, this.data);
+  	});
   }
+  
 }
 
+
+// Think these should all be classes/model classes isntead of interfaces
+// Would be more useful to be able to instantiate them
 export interface FieldMetaData {
 	type: string
 	label: string
