@@ -16,9 +16,6 @@ export class ValidationManagerService {
   	e.logic=ComparisonType.equals;
   	e.value='1'
 
-  	console.log(e)
-  	console.log(d)
-
   	expect(d.logic === ComparisonType.equals)
   	const eff1 = {applyValues: [new ValueDeclaration('category', '2', '')]}
   	const eff2: Effect = { validation: [new ValidationRule(['category'], 'required'), new ValidationRule(['category'], 'required')] }
@@ -38,7 +35,10 @@ export class ValidationManagerService {
   	console.log(form.valid)
   	form.controls.foul.setValue('2');
   	console.log(form.valid)
-  	form.controls.category.setValue('1');
+  	form.controls.foul.setValue('1');
+  	// form.controls.category.setValue('1');
+  	console.log(form.valid)
+  	form.controls.foul.setValue('2');
   	console.log(form.valid)
   }
 }
@@ -152,7 +152,6 @@ export class RuleProcessor {
 		this.rules = ruleSet.map((rule) => new RuleInstance(rule, form, this.heartbeat.asObservable()));
 		const coordinator: Observable<Signal[]> = combineLatest(this.rules.map(rule=>rule.conditionStream));
 		const subs = coordinator.subscribe((signals: Signal[]) => {
-			console.log(signals);
 			const controlMap = {}
 			const actives = signals.filter(signal => signal.active);
 			const effects = actives.map(active=>active.effects).forEach(effectList => {
@@ -169,7 +168,14 @@ export class RuleProcessor {
 			});
 			Object.keys(controlMap).forEach(key => {
 				form.controls[key].setValidators(controlMap[key]);
-				form.controls[key].updateValueAndValidity();
+				form.controls[key].updateValueAndValidity({emitEvent:false});
+			});
+			// For all controls not in control map - clear validators
+			Object.keys(form.controls).forEach(controlName => {
+				if (!(controlName in controlMap)) {
+					form.controls[controlName].clearValidators();
+					form.controls[controlName].updateValueAndValidity({emitEvent:false});
+				}
 			});
 
 		});
